@@ -4,7 +4,7 @@ addpath ./measure ./tsne
 datasetname = {'WikipediaArticles','bbcsport_seg14of4','Handwritten_numerals',...
          'MSRCV1','Caltech101-7','Caltech101-20'};
 
-for di = 5:5
+for di = 1:5
     path = ['.\dataset\',datasetname{di},'.mat']
     f=load(path);
     data=f.X;
