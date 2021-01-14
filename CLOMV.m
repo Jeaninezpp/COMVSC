@@ -1,10 +1,10 @@
-function [ress,FV,Fstar,LV,WV,Yres,obj]=CLOMV(X,ylabel,B,alpha,gamma,para3,para4,FV,WV,LV)
+function [ress,FV,Fstar,LV,WV,Yres,obj]=CLOMV(X,ylabel,B,alpha,gamma,FV,WV,LV)
 
 MaxIter = 100; 
 v1=length(X);% # of view
 n=length(ylabel);  % # of samples
 c=length(unique(ylabel));% # of clusters
-R = eye(c);% 初始化旋转矩阵为c×c的单位阵
+R = eye(c);% initialize R
 Fstar = RandOrthhMat(n,c);
 % Fstar = rand(n,c);
 T = eye(c);
@@ -26,29 +26,19 @@ for i=1:MaxIter
         
         P = calculate(Fv);
         %% Zv
-% % distance
-%         for ij=1:n
-%          	h=distance(Fv,n,ij);% 1*n  //    h_ij = norm( f_ij - fj )^2
-%         	Zv(:,ij)=B{num}*(xx(:,ij) - 1/4*para3*h') ;% hyper para�? beta
-%         end
+
 
 % % closed-form
         Zv = 0.5 * B{num}*(2*xx+P/2);
-%         % Strategy 1 ---
-%         Zv(Zv<0)=0;
-%         rowsum = sum(Zv,2);
-%         rowdiag = diag(rowsum);
-%         Zv = rowdiag^-1*Zv;% row normalization
 
-        %%Strategy 2 ---projection
+        %%Strategy  ---projection
         Zv = Zv - diag(diag(Zv));
         for ii = 1:size(Zv,2)
             idx= 1:size(Zv,2);
             idx(ii) = [];
             Zv(ii,idx) = EProjSimplex_new(Zv(ii,idx));
         end
-        % % Zv(Zv<0)=0;
-        % % Zv = (Zv+Zv')/2;
+
         
         % nor L
         D = diag(sum(Zv));
@@ -57,7 +47,6 @@ for i=1:MaxIter
         ZV{num} = Zv;
         LV{num} = L;
     end
-    % obj(i,1)=cal_obj(X,n,c,v1,alpha,gamma,para3,para4,ZV,LV,FV,Fstar,R,Yres);
 
     %% F*
     SumFv = zeros(size(FV{1}));
@@ -70,13 +59,7 @@ for i=1:MaxIter
     [Uf,~,Vf] = svd(FGR,'econ');
     Fstar = Uf*Vf';
     
-    % obj(i,2)=cal_obj(X,n,c,v1,alpha,gamma,para3,para4,ZV,LV,FV,Fstar,R,Yres);
 
-%     Fstar_tsne = tsne(Fstar, ylabel);
-
-%     [a,~] = kmeans(Fstar,c);
-%     [Fstar_kmresult(i,:)] = Clustering8Measure(ylabel,a); 
-%     disp(['Fstar_acc: ', num2str(Fstar_kmresult(i,7))]);
 
     %% Fv Reweighting
     for vidx = 1:v1
@@ -99,32 +82,12 @@ for i=1:MaxIter
         end
         FV{vidx}=fv;
     end
-    % disp('After Fv');
-    % obj(i,3)=cal_obj(X,n,c,v1,alpha,gamma,para3,para4,ZV,LV,FV,Fstar,R,Yres);
 
-% %% Fv solveF
-%     opts.record = 0;
-%     opts.mxitr  = 1000;%1000
-%     opts.xtol = 1e-5;
-%     opts.gtol = 1e-5;
-%     opts.ftol = 1e-8;
-%     out.tau = 1e-3;
-% 
-%     for vidx = 1:v1
-%         fv=FV{vidx};
-%         lv=LV{vidx};
-%         [fv,out]=solveF(fv,@fun1,opts,para4/para3,Fstar,T,lv);
-%         FV{vidx}=fv;
-%     end
-%     obj(i,3)=cal_obj(X,n,c,v1,alpha,gamma,para3,para4,ZV,LV,FV,Fstar,R,Yres);
 
     %% R
     % max tr(R'Fstar'G)
     [Ur,~,Vr] = svd(Fstar'*G,'econ');
     R = Ur*Vr';
-    
-    % disp('After R');
-    % obj(i,4)=cal_obj(X,n,c,v1,alpha,gamma,para3,para4,ZV,LV,FV,Fstar,R,Yres);
     
     
     %% updata Y
@@ -150,20 +113,21 @@ for i=1:MaxIter
         % Y = full(sparse(1:n, res_label, ones(n, 1), n, c));
     end
  
-	%disp('After Y');
-    obj(i,5)=cal_obj(X,n,c,v1,alpha,gamma,para3,para4,ZV,LV,FV,Fstar,R,Yres);
+    %disp('After Y');
+    obj(i)=cal_obj(X,n,c,v1,alpha,gamma,ZV,LV,FV,Fstar,R,Yres);
    
     [ress(i,:)] = Clustering8Measure(ylabel,res_label);
     % disp(['ACC:',num2str(ress(i,7))]);
 
-% %     convergence
-%     if i>99 && (norm(obj(i,5)-obj(i-1,5))/norm(obj(i,5))<1e-6)
-%         break
-%     end
-    objres(i) = norm(res_label - resold)/norm(resold);
-    if i>99 && (norm(res_label - resold)/norm(resold)<1e-5)
-        break
-    end
+ %     convergence
+     if i>99 && (norm(obj(i)-obj(i-1))/norm(obj(i))<1e-6)
+         break
+     end
+%    objres(i) = norm(res_label - resold)/norm(resold);
+%    if i>99 && (norm(res_label - resold)/norm(resold)<1e-5)
+%        break
+%    end
+
 end%interaction end
 end
 
