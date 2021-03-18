@@ -6,7 +6,7 @@ If you want to run this algorithm, you can check the `run.m` file.
 
 File `CLOMV_w` is the core part of our algorithm. It contains the details of the optimization.
 
-You can found the datasets used in our paper in [this repository](https://github.com/Jeaninezpp/multi-view-datasets) .
+You can find the datasets used in our paper in [this repository](https://github.com/Jeaninezpp/multi-view-datasets) .
 
 ---
 
