@@ -1,4 +1,11 @@
 # Implementaion of Consensus One-step Multi-view Subspace Clustering
+[stars-img]: https://img.shields.io/github/stars/Jeaninezpp/COMVSC?style=plastic
+[stars-url]: https://github.com/Jeaninezpp/COMVSC/stargazers
+[fork-img]: https://img.shields.io/github/forks/Jeaninezpp/COMVSC?style=plastic
+[fork-url]: https://github.com/Jeaninezpp/COMVSC/network/members
+
+[![GitHub stars][stars-img]][stars-url]
+[![GitHub forks][fork-img]][fork-url]
 
 This package is an MATLAB implementation of paper 'Consensus One-step Multi-view Subspace Clustering' in IEEE TKDE.
 
