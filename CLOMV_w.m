@@ -152,7 +152,7 @@ for i=1:MaxIter
     end
  
 	%disp('After Y');
-    obj(i,5)=cal_obj(X,n,c,v1,alpha,gamma,para3,para4,ZV,LV,FV,Fstar,R,Yres);
+    obj(i,5)=cal_obj(X,n,c,v1,alpha,gamma,ZV,LV,FV,Fstar,R,Yres);
    
     [ress(i,:)] = Clustering8Measure(ylabel,res_label);
 
